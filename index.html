@@ -18,11 +18,17 @@ font-size:22px;
 padding:10px;
 }
 button{
+padding:10px 15px;
+font-size:18px;
+margin-top:8px;
+margin-right:5px;
+cursor:pointer;
+}
+.mainbtn{
 width:100%;
 padding:15px;
 font-size:22px;
 margin-top:15px;
-cursor:pointer;
 }
 .result{
 margin-top:20px;
@@ -31,11 +37,14 @@ border:1px solid #ccc;
 border-radius:10px;
 font-size:20px;
 }
-.copybtn{
-margin-top:5px;
-padding:6px 10px;
+.history{
+margin-top:20px;
 font-size:16px;
-width:auto;
+}
+.history div{
+cursor:pointer;
+padding:5px;
+border-bottom:1px solid #ddd;
 }
 </style>
 </head>
@@ -45,25 +54,36 @@ width:auto;
 
 <textarea id="inputText" placeholder="영어 또는 한국어 입력"></textarea>
 
-<button onclick="translateText()">번역하기</button>
+<button class="mainbtn" onclick="translateText()">번역하기</button>
 
 <div class="result">
 
 <p>EN: <span id="en"></span></p>
-<button class="copybtn" onclick="copyText('en')">복사</button>
+<button onclick="copyText('en')">복사</button>
+<button onclick="speakText('en','en-US')">🔊</button>
 
 <p>FR: <span id="fr"></span></p>
-<button class="copybtn" onclick="copyText('fr')">복사</button>
+<button onclick="copyText('fr')">복사</button>
+<button onclick="speakText('fr','fr-FR')">🔊</button>
 
 <p>DE: <span id="de"></span></p>
-<button class="copybtn" onclick="copyText('de')">복사</button>
+<button onclick="copyText('de')">복사</button>
+<button onclick="speakText('de','de-DE')">🔊</button>
 
 <p>IT: <span id="it"></span></p>
-<button class="copybtn" onclick="copyText('it')">복사</button>
+<button onclick="copyText('it')">복사</button>
+<button onclick="speakText('it','it-IT')">🔊</button>
 
 </div>
 
+<div class="history">
+<h3>최근 입력</h3>
+<div id="historyList"></div>
+</div>
+
 <script>
+let timer;
+
 async function translate(target,text){
 const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${target}&dt=t&q=${encodeURIComponent(text)}`;
 const res=await fetch(url);
@@ -73,6 +93,9 @@ return data[0].map(item=>item[0]).join('');
 
 async function translateText(){
 const text=document.getElementById("inputText").value;
+if(!text.trim()) return;
+
+saveHistory(text);
 
 try{
 document.getElementById("en").innerText=await translate("en",text);
@@ -90,6 +113,48 @@ document.getElementById("it").innerText="오류";
 function copyText(id){
 navigator.clipboard.writeText(document.getElementById(id).innerText);
 }
+
+function speakText(id,lang){
+const text=document.getElementById(id).innerText;
+const utterance=new SpeechSynthesisUtterance(text);
+utterance.lang=lang;
+speechSynthesis.speak(utterance);
+}
+
+document.getElementById("inputText").addEventListener("keydown",function(e){
+if(e.key==="Enter" && !e.shiftKey){
+e.preventDefault();
+translateText();
+}
+});
+
+document.getElementById("inputText").addEventListener("input",function(){
+clearTimeout(timer);
+timer=setTimeout(()=>{
+translateText();
+},700);
+});
+
+function saveHistory(text){
+let history=JSON.parse(localStorage.getItem("history"))||[];
+history.unshift(text);
+history=[...new Set(history)].slice(0,10);
+localStorage.setItem("history",JSON.stringify(history));
+renderHistory();
+}
+
+function renderHistory(){
+let history=JSON.parse(localStorage.getItem("history"))||[];
+document.getElementById("historyList").innerHTML=
+history.map(item=>`<div onclick="useHistory('${item}')">${item}</div>`).join('');
+}
+
+function useHistory(text){
+document.getElementById("inputText").value=text;
+translateText();
+}
+
+renderHistory();
 </script>
 
 </body>
