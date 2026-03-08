@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Translator</title>
+<style>
+body{
+font-family:Arial;
+max-width:500px;
+margin:30px auto;
+padding:20px;
+}
+textarea{
+width:100%;
+height:120px;
+font-size:18px;
+padding:10px;
+}
+button{
+width:100%;
+padding:15px;
+font-size:18px;
+margin-top:15px;
+}
+.result{
+margin-top:20px;
+padding:15px;
+border:1px solid #ccc;
+border-radius:10px;
+}
+.copybtn{
+margin-top:5px;
+padding:6px 10px;
+font-size:14px;
+width:auto;
+}
+</style>
+</head>
+<body>
+
+<h2>🌍 Multi Translator</h2>
+
+<textarea id="inputText" placeholder="영어 또는 한국어 입력"></textarea>
+
+<button onclick="translateText()">번역하기</button>
+
+<div class="result">
+<p>🇫🇷 <span id="fr"></span></p>
+<button class="copybtn" onclick="copyText('fr')">복사</button>
+
+<p>🇩🇪 <span id="de"></span></p>
+<button class="copybtn" onclick="copyText('de')">복사</button>
+
+<p>🇮🇹 <span id="it"></span></p>
+<button class="copybtn" onclick="copyText('it')">복사</button>
+</div>
+
+<script>
+async function translate(target,text){
+const res = await fetch("https://libretranslate.de/translate",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+q:text,
+source:"auto",
+target:target,
+format:"text"
+})
+});
+const data = await res.json();
+return data.translatedText;
+}
+
+async function translateText(){
+const text=document.getElementById("inputText").value;
+
+document.getElementById("fr").innerText="...";
+document.getElementById("de").innerText="...";
+document.getElementById("it").innerText="...";
+
+const fr=await translate("fr",text);
+const de=await translate("de",text);
+const it=await translate("it",text);
+
+document.getElementById("fr").innerText=fr;
+document.getElementById("de").innerText=de;
+document.getElementById("it").innerText=it;
+}
+
+function copyText(id){
+const text=document.getElementById(id).innerText;
+navigator.clipboard.writeText(text);
+}
+</script>
+
+</body>
+</html>
