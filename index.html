@@ -14,25 +14,27 @@ padding:20px;
 textarea{
 width:100%;
 height:120px;
-font-size:18px;
+font-size:22px;
 padding:10px;
 }
 button{
 width:100%;
 padding:15px;
-font-size:18px;
+font-size:22px;
 margin-top:15px;
+cursor:pointer;
 }
 .result{
 margin-top:20px;
 padding:15px;
 border:1px solid #ccc;
 border-radius:10px;
+font-size:20px;
 }
 .copybtn{
 margin-top:5px;
 padding:6px 10px;
-font-size:14px;
+font-size:16px;
 width:auto;
 }
 </style>
@@ -46,13 +48,13 @@ width:auto;
 <button onclick="translateText()">번역하기</button>
 
 <div class="result">
-<p>🇫🇷 <span id="fr"></span></p>
+<p>🇫🇷 FR: <span id="fr"></span></p>
 <button class="copybtn" onclick="copyText('fr')">복사</button>
 
-<p>🇩🇪 <span id="de"></span></p>
+<p>🇩🇪 DE: <span id="de"></span></p>
 <button class="copybtn" onclick="copyText('de')">복사</button>
 
-<p>🇮🇹 <span id="it"></span></p>
+<p>🇮🇹 IT: <span id="it"></span></p>
 <button class="copybtn" onclick="copyText('it')">복사</button>
 </div>
 
@@ -60,7 +62,9 @@ width:auto;
 async function translate(target,text){
 const res = await fetch("https://translate.argosopentech.com/translate",{
 method:"POST",
-headers:{"Content-Type":"application/json"},
+headers:{
+"Content-Type":"application/json"
+},
 body:JSON.stringify({
 q:text,
 source:"auto",
@@ -68,6 +72,7 @@ target:target,
 format:"text"
 })
 });
+
 const data = await res.json();
 return data.translatedText;
 }
@@ -75,10 +80,11 @@ return data.translatedText;
 async function translateText(){
 const text=document.getElementById("inputText").value;
 
-document.getElementById("fr").innerText="...";
-document.getElementById("de").innerText="...";
-document.getElementById("it").innerText="...";
+document.getElementById("fr").innerText="번역중...";
+document.getElementById("de").innerText="번역중...";
+document.getElementById("it").innerText="번역중...";
 
+try{
 const fr=await translate("fr",text);
 const de=await translate("de",text);
 const it=await translate("it",text);
@@ -86,6 +92,11 @@ const it=await translate("it",text);
 document.getElementById("fr").innerText=fr;
 document.getElementById("de").innerText=de;
 document.getElementById("it").innerText=it;
+}catch(e){
+document.getElementById("fr").innerText="오류";
+document.getElementById("de").innerText="오류";
+document.getElementById("it").innerText="오류";
+}
 }
 
 function copyText(id){
