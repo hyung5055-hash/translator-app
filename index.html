@@ -74,6 +74,10 @@ border-bottom:1px solid #ddd;
 <button onclick="copyText('it')">복사</button>
 <button onclick="speakText('it','it-IT')">🔊</button>
 
+<p>KO: <span id="ko"></span></p>
+<button onclick="copyText('ko')">복사</button>
+<button onclick="speakText('ko','ko-KR')">🔊</button>
+
 </div>
 
 <div class="history">
@@ -102,11 +106,13 @@ document.getElementById("en").innerText=await translate("en",text);
 document.getElementById("fr").innerText=await translate("fr",text);
 document.getElementById("de").innerText=await translate("de",text);
 document.getElementById("it").innerText=await translate("it",text);
+document.getElementById("ko").innerText=await translate("ko",text);
 }catch(e){
 document.getElementById("en").innerText="오류";
 document.getElementById("fr").innerText="오류";
 document.getElementById("de").innerText="오류";
 document.getElementById("it").innerText="오류";
+document.getElementById("ko").innerText="오류";
 }
 }
 
