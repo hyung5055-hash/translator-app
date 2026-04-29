@@ -77,7 +77,12 @@ cursor:pointer;
 
 <div class="topbar">
 <h2>🌍 Multi Translator</h2>
+
+<div>
 <button class="miniBtn" onclick="translateText()">번역</button>
+<button class="miniBtn" onclick="clearInput()">삭제</button>
+</div>
+
 </div>
 
 <textarea id="inputText" placeholder="영어 또는 한국어 입력"></textarea>
@@ -186,7 +191,20 @@ document.getElementById("inputText").value=text;
 translateText();
 }
 
+function clearInput(){
+document.getElementById("inputText").value="";
+
+document.getElementById("en").innerText="";
+document.getElementById("fr").innerText="";
+document.getElementById("de").innerText="";
+document.getElementById("it").innerText="";
+document.getElementById("ko").innerText="";
+
+document.getElementById("inputText").focus();
+}
+
 renderHistory();
+
 </script>
 
 </body>
