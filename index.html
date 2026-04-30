@@ -175,7 +175,7 @@ translateText();
 function saveHistory(text){
 let history=JSON.parse(localStorage.getItem("history"))||[];
 history.unshift(text);
-history=[...new Set(history)].slice(0,10);
+history=[...new Set(history)].slice(0,50);
 localStorage.setItem("history",JSON.stringify(history));
 renderHistory();
 }
