@@ -79,7 +79,7 @@ cursor:pointer;
 <h2>🌍 Multi Translator</h2>
 
 <div>
-<button class="miniBtn" onclick="translateText()">번역</button>
+<button class="miniBtn" onclick="translateText(true)">번역</button>
 <button class="miniBtn" onclick="clearInput()">삭제</button>
 </div>
 
@@ -126,11 +126,16 @@ const data=await res.json();
 return data[0].map(item=>item[0]).join('');
 }
 
-async function translateText(){
+
+
+
+async function translateText(save=false){
 const text=document.getElementById("inputText").value;
 if(!text.trim()) return;
 
+if(save){
 saveHistory(text);
+}
 
 try{
 document.getElementById("en").innerText=await translate("en",text);
@@ -161,7 +166,7 @@ speechSynthesis.speak(utterance);
 document.getElementById("inputText").addEventListener("keydown",function(e){
 if(e.key==="Enter" && !e.shiftKey){
 e.preventDefault();
-translateText();
+translateText(true);
 }
 });
 
@@ -175,7 +180,7 @@ translateText();
 function saveHistory(text){
 let history=JSON.parse(localStorage.getItem("history"))||[];
 history.unshift(text);
-history=[...new Set(history)].slice(0,20);
+history=[...new Set(history)].slice(0,50);
 localStorage.setItem("history",JSON.stringify(history));
 renderHistory();
 }
